@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
-const options = {
+index_1.PeerServer({
     port: 9000,
     expire_timeout: 5000,
     alive_timeout: 60000,
@@ -14,6 +14,4 @@ const options = {
     redis: true,
     redisHost: "127.0.0.1",
     redisPort: 6379,
-};
-index_1.PeerServer(options);
-console.log("Server started at port 9000");
+});

@@ -9,6 +9,7 @@ const ws_1 = __importDefault(require("ws"));
 const enums_1 = require("../../enums");
 const client_1 = require("../../models/client");
 const utils_1 = require("../../utils");
+const Logger_1 = __importDefault(require("../../Logger"));
 const Redis = require("ioredis");
 const WS_PATH = "peerjs";
 class WebSocketServer extends events_1.default {
@@ -19,6 +20,7 @@ class WebSocketServer extends events_1.default {
         this.config = config;
         const path = this.config.path;
         this.path = `${path}${path.endsWith("/") ? "" : "/"}${WS_PATH}`;
+        this.logger = new Logger_1.default(this.config.redisHost, this.config.redisPort);
         this.socketServer = new ws_1.default.Server({ path: this.path, server });
         this.socketServer.on("connection", (socket, req) => this._onSocketConnection(socket, req));
         this.socketServer.on("error", (error) => this._onSocketError(error));
@@ -39,6 +41,7 @@ class WebSocketServer extends events_1.default {
                 const receivedMessage = JSON.parse(tmessage);
                 if (receivedMessage.dst &&
                     this.realm.getClientById(receivedMessage.dst)) {
+                    this.logger.logById(receivedMessage.dst, `MessageReceived::${receivedMessage.type} for Destination::${receivedMessage.dst} from Source::${receivedMessage.src}`);
                     this.emit("message", undefined, receivedMessage);
                 }
             }
@@ -57,6 +60,7 @@ class WebSocketServer extends events_1.default {
         if (client) {
             if (token !== client.getToken()) {
                 // ID-taken, invalid token
+                this.logger.logById(id, "Invalid Token.Closing Connection");
                 socket.send(JSON.stringify({
                     type: enums_1.MessageType.ID_TAKEN,
                     payload: { msg: "ID is taken" },
@@ -78,6 +82,7 @@ class WebSocketServer extends events_1.default {
             return this._sendErrorAndClose(socket, enums_1.Errors.CONNECTION_LIMIT_EXCEED);
         }
         console.log("NEW CLIENT:::", id);
+        this.logger.logById(id, `Client Connected ${id}`);
         const newClient = new client_1.Client({ id, token });
         this.realm.setClient(newClient, id);
         socket.send(JSON.stringify({ type: enums_1.MessageType.OPEN }));
@@ -88,6 +93,7 @@ class WebSocketServer extends events_1.default {
         // Cleanup after a socket closes.
         socket.on("close", () => {
             if (client.getSocket() === socket) {
+                this.logger.logById(client.getId(), `Connection closed.Cleaning up meeting`);
                 this.realm.removeClientById(client.getId());
                 this.emit("close", client);
             }
@@ -104,6 +110,7 @@ class WebSocketServer extends events_1.default {
                 this.emit("message", client, message);
             }
             catch (e) {
+                this.logger.logById(client.getId(), `Error in connection`);
                 this.emit("error", e);
             }
         });

@@ -14,17 +14,13 @@ export const TransmissionHandler = ({
     const srcId = message.src;
     const dstId = message.dst;
 
-    clog("Transmission:: Got message");
-
     const destinationClient = realm.getClientById(dstId);
 
     // User is connected!
     if (destinationClient) {
-      clog("Transmission:: Got Destination Client");
       const socket = destinationClient.getSocket();
       try {
         if (socket) {
-          clog("Transmission:: Got Socket");
           const data = JSON.stringify(message);
 
           socket.send(data);

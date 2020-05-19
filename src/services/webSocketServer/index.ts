@@ -8,6 +8,7 @@ import { Client, IClient } from "../../models/client";
 import { IRealm } from "../../models/realm";
 import { MyWebSocket } from "./webSocket";
 import { clog } from "../../utils";
+import Logger from "../../Logger";
 
 const Redis = require("ioredis");
 
@@ -35,6 +36,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
   private readonly messageSubscriber: any;
   private readonly messagePublisher: any;
   public readonly socketServer: WebSocketLib.Server;
+  public readonly logger: Logger;
 
   constructor({
     server,
@@ -51,9 +53,9 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
 
     this.realm = realm;
     this.config = config;
-
     const path = this.config.path;
     this.path = `${path}${path.endsWith("/") ? "" : "/"}${WS_PATH}`;
+    this.logger = new Logger(this.config.redisHost, this.config.redisPort);
 
     this.socketServer = new WebSocketLib.Server({ path: this.path, server });
 
@@ -90,6 +92,10 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
             receivedMessage.dst &&
             this.realm.getClientById(receivedMessage.dst)
           ) {
+            this.logger.logById(
+              receivedMessage.dst,
+              `MessageReceived::${receivedMessage.type} for Destination::${receivedMessage.dst} from Source::${receivedMessage.src}`
+            );
             this.emit("message", undefined, receivedMessage);
           }
         }
@@ -115,6 +121,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     if (client) {
       if (token !== client.getToken()) {
         // ID-taken, invalid token
+        this.logger.logById(id, "Invalid Token.Closing Connection");
         socket.send(
           JSON.stringify({
             type: MessageType.ID_TAKEN,
@@ -153,6 +160,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     }
 
     console.log("NEW CLIENT:::", id);
+    this.logger.logById(id, `Client Connected ${id}`);
 
     const newClient: IClient = new Client({ id, token });
     this.realm.setClient(newClient, id);
@@ -167,6 +175,10 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     // Cleanup after a socket closes.
     socket.on("close", () => {
       if (client.getSocket() === socket) {
+        this.logger.logById(
+          client.getId(),
+          `Connection closed.Cleaning up meeting`
+        );
         this.realm.removeClientById(client.getId());
         this.emit("close", client);
       }
@@ -186,6 +198,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
         }
         this.emit("message", client, message);
       } catch (e) {
+        this.logger.logById(client.getId(), `Error in connection`);
         this.emit("error", e);
       }
     });

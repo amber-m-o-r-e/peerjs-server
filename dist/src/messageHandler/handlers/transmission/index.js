@@ -7,15 +7,12 @@ exports.TransmissionHandler = ({ realm, }) => {
         const type = message.type;
         const srcId = message.src;
         const dstId = message.dst;
-        utils_1.clog("Transmission:: Got message");
         const destinationClient = realm.getClientById(dstId);
         // User is connected!
         if (destinationClient) {
-            utils_1.clog("Transmission:: Got Destination Client");
             const socket = destinationClient.getSocket();
             try {
                 if (socket) {
-                    utils_1.clog("Transmission:: Got Socket");
                     const data = JSON.stringify(message);
                     socket.send(data);
                 }
