@@ -1,7 +1,7 @@
 import { IConfig } from "../../config";
 import { IClient } from "../../models/client";
 import { IRealm } from "../../models/realm";
-import { clog } from "../../utils";
+//import { clog } from "../../utils";
 
 const DEFAULT_CHECK_INTERVAL = 300;
 

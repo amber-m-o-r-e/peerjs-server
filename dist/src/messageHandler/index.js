@@ -26,7 +26,7 @@ class MessageHandler {
         this.handlersRegistry.registerHandler(enums_1.MessageType.EXPIRE, handleTransmission);
     }
     handle(client, message) {
-        utils_1.clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + (client || {}));
+        utils_1.clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + JSON.stringify(client || {}));
         return this.handlersRegistry.handle(client, message);
     }
 }
