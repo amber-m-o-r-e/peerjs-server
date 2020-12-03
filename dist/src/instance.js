@@ -50,7 +50,7 @@ exports.createInstance = ({ app, server, options, }) => {
         app.emit("connection", client);
     });
     wss.on("message", (client, message) => {
-        utils_1.clog("On message triggered: " + (new Date()).toISOString());
+        //clog("On message triggered: " + (new Date()).toISOString());
         app.emit("message", client, message);
         messageHandler.handle(client, message);
     });

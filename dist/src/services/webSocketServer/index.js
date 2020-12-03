@@ -102,7 +102,7 @@ class WebSocketServer extends events_1.default {
         // Handle messages from peers.
         socket.on("message", (data) => {
             try {
-                utils_1.clog("Socket on-message: " + (new Date()).toISOString());
+                //clog("Socket on-message: " + (new Date()).toISOString());
                 const message = JSON.parse(data);
                 message.src = client.getId();
                 if (message.type !== "HEARTBEAT" && this.config.redis) {
