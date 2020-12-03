@@ -8,6 +8,8 @@ const optimistUsageLength = 98;
 const yargs = require("yargs");
 const version = pkg.version;
 const { PeerServer } = require("../dist/src");
+const { clog } = require("../src/utils");
+
 const opts = yargs
   .usage("Usage: $0")
   .wrap(Math.min(optimistUsageLength, yargs.terminalWidth()))
@@ -117,9 +119,11 @@ const server = PeerServer(opts, (server) => {
 });
 
 server.on("connection", (client) => {
+  clog("Client connected: " + (new Date()).toISOString() + ", " + client.getId());
   console.log(`Client connected: ${client.getId()}`);
 });
 
 server.on("disconnect", (client) => {
+  clog("Client disconnected: " + (new Date()).toISOString() + ", " + client.getId());
   console.log(`Client disconnected: ${client.getId()}`);
 });
