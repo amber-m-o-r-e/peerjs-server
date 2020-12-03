@@ -1,6 +1,7 @@
 import { IConfig } from "../../config";
 import { IClient } from "../../models/client";
 import { IRealm } from "../../models/realm";
+import { clog } from "../../utils";
 
 const DEFAULT_CHECK_INTERVAL = 300;
 
@@ -52,6 +53,7 @@ export class CheckBrokenConnections {
 
     const now = new Date().getTime();
     const { alive_timeout: aliveTimeout } = this.config;
+    clog("services.checkConnections: " + (new Date()).toISOString() + ", " + clientsIds);
 
     for (const clientId of clientsIds) {
       const client = this.realm.getClientById(clientId)!;

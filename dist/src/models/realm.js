@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const v4_1 = __importDefault(require("uuid/v4"));
 const messageQueue_1 = require("./messageQueue");
+const utils_1 = require("../utils");
 class Realm {
     constructor() {
         this.clients = new Map();
@@ -49,6 +50,7 @@ class Realm {
         while (this.getClientById(clientId)) {
             clientId = generateId();
         }
+        utils_1.clog("realm.generateClientId: " + (new Date()).toISOString() + ", " + clientId);
         console.log("Generate ID", clientId);
         return clientId;
     }

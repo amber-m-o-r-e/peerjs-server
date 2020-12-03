@@ -5,6 +5,7 @@ import { IRealm } from "../models/realm";
 import { Handler } from "./handler";
 import { HeartbeatHandler, TransmissionHandler } from "./handlers";
 import { IHandlersRegistry, HandlersRegistry } from "./handlersRegistry";
+import { clog } from "../utils";
 
 export interface IMessageHandler {
   handle(client: IClient | undefined, message: IMessage): boolean;
@@ -60,6 +61,7 @@ export class MessageHandler implements IMessageHandler {
   }
 
   public handle(client: IClient | undefined, message: IMessage): boolean {
+    clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + (client || {}));
     return this.handlersRegistry.handle(client, message);
   }
 }

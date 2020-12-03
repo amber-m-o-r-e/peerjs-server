@@ -2,6 +2,7 @@ import uuidv4 from "uuid/v4";
 import { IClient } from "./client";
 import { IMessage } from "./message";
 import { IMessageQueue, MessageQueue } from "./messageQueue";
+import { clog } from "../utils";
 
 export interface IRealm {
   getClientsIds(): string[];
@@ -76,6 +77,8 @@ export class Realm implements IRealm {
     while (this.getClientById(clientId)) {
       clientId = generateId();
     }
+
+    clog("realm.generateClientId: " + (new Date()).toISOString() + ", " + clientId);
     console.log("Generate ID", clientId);
 
     return clientId;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const enums_1 = require("../enums");
 const handlers_1 = require("./handlers");
 const handlersRegistry_1 = require("./handlersRegistry");
+const utils_1 = require("../utils");
 class MessageHandler {
     constructor(realm, handlersRegistry = new handlersRegistry_1.HandlersRegistry()) {
         this.handlersRegistry = handlersRegistry;
@@ -25,6 +26,7 @@ class MessageHandler {
         this.handlersRegistry.registerHandler(enums_1.MessageType.EXPIRE, handleTransmission);
     }
     handle(client, message) {
+        utils_1.clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + (client || {}));
         return this.handlersRegistry.handle(client, message);
     }
 }
