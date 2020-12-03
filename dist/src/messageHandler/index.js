@@ -26,7 +26,9 @@ class MessageHandler {
         this.handlersRegistry.registerHandler(enums_1.MessageType.EXPIRE, handleTransmission);
     }
     handle(client, message) {
-        utils_1.clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + JSON.stringify(client || {}));
+        let jssonClient = JSON.parse(JSON.stringify(client || {}));
+        utils_1.clog("messagerHandler.handle: " + (new Date()).toISOString()
+            + ", id: " + jssonClient.id + ", token: " + jssonClient.token + ", lastPing: " + jssonClient.lastPing);
         return this.handlersRegistry.handle(client, message);
     }
 }
