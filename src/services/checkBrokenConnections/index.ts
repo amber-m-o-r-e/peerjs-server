@@ -53,7 +53,7 @@ export class CheckBrokenConnections {
 
     const now = new Date().getTime();
     const { alive_timeout: aliveTimeout } = this.config;
-    clog("services.checkConnections: " + (new Date()).toISOString() + ", " + clientsIds);
+    //clog("services.checkConnections: " + (new Date()).toISOString() + ", " + clientsIds);
 
     for (const clientId of clientsIds) {
       const client = this.realm.getClientById(clientId)!;

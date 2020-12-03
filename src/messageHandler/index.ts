@@ -61,7 +61,7 @@ export class MessageHandler implements IMessageHandler {
   }
 
   public handle(client: IClient | undefined, message: IMessage): boolean {
-    clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + (client || {}));
+    clog("messagerHandler.handle: " + (new Date()).toISOString() + ", " + JSON.stringify(client || {}));
     return this.handlersRegistry.handle(client, message);
   }
 }
