@@ -92,6 +92,7 @@ class WebSocketServer extends events_1.default {
         client.setSocket(socket);
         // Cleanup after a socket closes.
         socket.on("close", () => {
+            utils_1.clog("_configureWS.close: " + (new Date()).toISOString());
             if (client.getSocket() === socket) {
                 this.logger.logById(client.getId(), `Connection closed.Cleaning up meeting`);
                 this.realm.removeClientById(client.getId());
@@ -101,6 +102,7 @@ class WebSocketServer extends events_1.default {
         // Handle messages from peers.
         socket.on("message", (data) => {
             try {
+                utils_1.clog("Socket on-message: " + (new Date()).toISOString());
                 const message = JSON.parse(data);
                 message.src = client.getId();
                 if (message.type !== "HEARTBEAT" && this.config.redis) {

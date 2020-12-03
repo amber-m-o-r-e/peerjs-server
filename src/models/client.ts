@@ -1,4 +1,5 @@
 import { MyWebSocket } from "../services/webSocketServer/webSocket";
+import { clog } from "../utils";
 
 export interface IClient {
   getId(): string;
@@ -24,6 +25,8 @@ export class Client implements IClient {
 
   constructor({ id, token }: { id: string; token: string; }) {
     console.log("Create a client");
+    clog("Create a client: " + (new Date()).toISOString());
+
     this.id = id;
     this.token = token;
   }

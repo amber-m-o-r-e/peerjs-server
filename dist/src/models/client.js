@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = require("../utils");
 class Client {
     constructor({ id, token }) {
         this.socket = null;
         this.lastPing = new Date().getTime();
         console.log("Create a client");
+        utils_1.clog("Create a client: " + (new Date()).toISOString());
         this.id = id;
         this.token = token;
     }

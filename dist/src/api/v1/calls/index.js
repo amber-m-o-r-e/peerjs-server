@@ -4,9 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const utils_1 = require("../../../utils");
 exports.default = ({ realm, messageHandler, }) => {
     const app = express_1.default.Router();
     const handle = (req, res, next) => {
+        utils_1.clog("Handle getting executed: " + (new Date()).toISOString());
         const { id } = req.params;
         console.log("Got request...");
         if (!id)
@@ -23,6 +25,7 @@ exports.default = ({ realm, messageHandler, }) => {
             payload,
         };
         messageHandler.handle(client, message);
+        utils_1.clog("Handle executed: " + (new Date()).toISOString());
         res.sendStatus(200);
     };
     app.post("/offer", handle);

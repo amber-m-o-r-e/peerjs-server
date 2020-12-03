@@ -10,6 +10,7 @@ const messagesExpire_1 = require("./services/messagesExpire");
 const webSocketServer_1 = require("./services/webSocketServer");
 const messageHandler_1 = require("./messageHandler");
 const api_1 = require("./api");
+const utils_1 = require("./utils");
 exports.createInstance = ({ app, server, options, }) => {
     const config = options;
     const realm = new realm_1.Realm();
@@ -36,6 +37,7 @@ exports.createInstance = ({ app, server, options, }) => {
         config: customConfig,
     });
     wss.on("connection", (client) => {
+        utils_1.clog("Connecting to server: " + (new Date()).toISOString());
         const messageQueue = realm.getMessageQueueById(client.getId());
         if (messageQueue) {
             let message;
@@ -44,13 +46,16 @@ exports.createInstance = ({ app, server, options, }) => {
             }
             realm.clearMessageQueue(client.getId());
         }
+        utils_1.clog("Connected to server: " + (new Date()).toISOString());
         app.emit("connection", client);
     });
     wss.on("message", (client, message) => {
+        utils_1.clog("On message triggered: " + (new Date()).toISOString());
         app.emit("message", client, message);
         messageHandler.handle(client, message);
     });
     wss.on("close", (client) => {
+        utils_1.clog("Connection closed: " + (new Date()).toISOString());
         app.emit("disconnect", client);
     });
     wss.on("error", (error) => {

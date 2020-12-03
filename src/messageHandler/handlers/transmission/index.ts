@@ -22,6 +22,7 @@ export const TransmissionHandler = ({
       try {
         if (socket) {
           const data = JSON.stringify(message);
+          clog("TransmissionHandler.userConnected: " + (new Date()).toISOString());
 
           socket.send(data);
         } else {

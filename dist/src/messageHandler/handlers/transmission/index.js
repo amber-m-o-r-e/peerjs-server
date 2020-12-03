@@ -14,6 +14,7 @@ exports.TransmissionHandler = ({ realm, }) => {
             try {
                 if (socket) {
                     const data = JSON.stringify(message);
+                    utils_1.clog("TransmissionHandler.userConnected: " + (new Date()).toISOString());
                     socket.send(data);
                 }
                 else {

@@ -11,6 +11,7 @@ import { IWebSocketServer, WebSocketServer } from "./services/webSocketServer";
 import { MessageHandler } from "./messageHandler";
 import { Api } from "./api";
 import { IConfig } from "./config";
+import { clog } from "./utils";
 
 export const createInstance = ({
   app,
@@ -54,6 +55,7 @@ export const createInstance = ({
   });
 
   wss.on("connection", (client: IClient) => {
+    clog("Connecting to server: " + (new Date()).toISOString());
     const messageQueue = realm.getMessageQueueById(client.getId());
 
     if (messageQueue) {
@@ -65,15 +67,18 @@ export const createInstance = ({
       realm.clearMessageQueue(client.getId());
     }
 
+    clog("Connected to server: " + (new Date()).toISOString());
     app.emit("connection", client);
   });
 
   wss.on("message", (client: IClient, message: IMessage) => {
+    clog("On message triggered: " + (new Date()).toISOString());
     app.emit("message", client, message);
     messageHandler.handle(client, message);
   });
 
   wss.on("close", (client: IClient) => {
+    clog("Connection closed: " + (new Date()).toISOString());
     app.emit("disconnect", client);
   });
 

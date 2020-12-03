@@ -2,6 +2,7 @@ import express from "express";
 import { IMessageHandler } from "../../../messageHandler";
 import { IMessage } from "../../../models/message";
 import { IRealm } from "../../../models/realm";
+import { clog } from "../../../utils";
 
 export default ({
   realm,
@@ -17,6 +18,7 @@ export default ({
     res: express.Response,
     next: express.NextFunction
   ): any => {
+    clog("Handle getting executed: " + (new Date()).toISOString());
     const { id } = req.params;
 
     console.log("Got request...");
@@ -40,6 +42,7 @@ export default ({
 
     messageHandler.handle(client, message);
 
+    clog("Handle executed: " + (new Date()).toISOString());
     res.sendStatus(200);
   };
 

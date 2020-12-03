@@ -174,6 +174,8 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
 
     // Cleanup after a socket closes.
     socket.on("close", () => {
+      clog("_configureWS.close: " + (new Date()).toISOString());
+
       if (client.getSocket() === socket) {
         this.logger.logById(
           client.getId(),
@@ -187,6 +189,8 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     // Handle messages from peers.
     socket.on("message", (data: WebSocketLib.Data) => {
       try {
+        clog("Socket on-message: " + (new Date()).toISOString());
+
         const message = JSON.parse(data as string);
         message.src = client.getId();
         if (message.type !== "HEARTBEAT" && this.config.redis) {
