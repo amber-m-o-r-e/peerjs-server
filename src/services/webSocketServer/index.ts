@@ -85,6 +85,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
       "message",
       (channel: string, tmessage: string) => {
         clog("redis.messageSubscriber-start: " + (new Date()).toISOString());
+        clog("channel: " + channel + ", tmessage: " + tmessage);
         clog(`Received Message on Channel:: ${channel}`);
 
         if (channel === "transmission") {

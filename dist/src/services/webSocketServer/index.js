@@ -37,6 +37,7 @@ class WebSocketServer extends events_1.default {
         });
         this.messageSubscriber.on("message", (channel, tmessage) => {
             utils_1.clog("redis.messageSubscriber-start: " + (new Date()).toISOString());
+            utils_1.clog("channel: " + channel + ", tmessage: " + tmessage);
             utils_1.clog(`Received Message on Channel:: ${channel}`);
             if (channel === "transmission") {
                 const receivedMessage = JSON.parse(tmessage);
