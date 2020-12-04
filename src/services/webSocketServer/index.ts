@@ -84,6 +84,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     this.messageSubscriber.on(
       "message",
       (channel: string, tmessage: string) => {
+        clog("redis.messageSubscriber-start: " + (new Date()).toISOString());
         clog(`Received Message on Channel:: ${channel}`);
 
         if (channel === "transmission") {
@@ -99,6 +100,8 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
             this.emit("message", undefined, receivedMessage);
           }
         }
+
+        clog("redis.messageSubscriber-end: " + (new Date()).toISOString());
       }
     );
   }
@@ -152,6 +155,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     id: string;
     token: string;
   }): void {
+    clog("index._registerClient-start: " + (new Date()).toISOString());
     // Check concurrent limit
     const clientsCount = this.realm.getClientsIds().length;
 
@@ -167,6 +171,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
     socket.send(JSON.stringify({ type: MessageType.OPEN }));
 
     this._configureWS(socket, newClient);
+    clog("index._registerClient-end: " + (new Date()).toISOString());
   }
 
   private _configureWS(socket: MyWebSocket, client: IClient): void {
@@ -174,7 +179,7 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
 
     // Cleanup after a socket closes.
     socket.on("close", () => {
-      clog("_configureWS.close: " + (new Date()).toISOString());
+      clog("_configureWS.close-start: " + (new Date()).toISOString());
 
       if (client.getSocket() === socket) {
         this.logger.logById(
@@ -184,6 +189,8 @@ export class WebSocketServer extends EventEmitter implements IWebSocketServer {
         this.realm.removeClientById(client.getId());
         this.emit("close", client);
       }
+
+      clog("_configureWS.close-end: " + (new Date()).toISOString());
     });
 
     // Handle messages from peers.

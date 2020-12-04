@@ -36,6 +36,7 @@ class WebSocketServer extends events_1.default {
                 console.log("Subscribed to Transmission messages");
         });
         this.messageSubscriber.on("message", (channel, tmessage) => {
+            utils_1.clog("redis.messageSubscriber-start: " + (new Date()).toISOString());
             utils_1.clog(`Received Message on Channel:: ${channel}`);
             if (channel === "transmission") {
                 const receivedMessage = JSON.parse(tmessage);
@@ -45,6 +46,7 @@ class WebSocketServer extends events_1.default {
                     this.emit("message", undefined, receivedMessage);
                 }
             }
+            utils_1.clog("redis.messageSubscriber-end: " + (new Date()).toISOString());
         });
     }
     _onSocketConnection(socket, req) {
@@ -76,6 +78,7 @@ class WebSocketServer extends events_1.default {
         this.emit("error", error);
     }
     _registerClient({ socket, id, token, }) {
+        utils_1.clog("index._registerClient-start: " + (new Date()).toISOString());
         // Check concurrent limit
         const clientsCount = this.realm.getClientsIds().length;
         if (clientsCount >= this.config.concurrent_limit) {
@@ -87,17 +90,19 @@ class WebSocketServer extends events_1.default {
         this.realm.setClient(newClient, id);
         socket.send(JSON.stringify({ type: enums_1.MessageType.OPEN }));
         this._configureWS(socket, newClient);
+        utils_1.clog("index._registerClient-end: " + (new Date()).toISOString());
     }
     _configureWS(socket, client) {
         client.setSocket(socket);
         // Cleanup after a socket closes.
         socket.on("close", () => {
-            utils_1.clog("_configureWS.close: " + (new Date()).toISOString());
+            utils_1.clog("_configureWS.close-start: " + (new Date()).toISOString());
             if (client.getSocket() === socket) {
                 this.logger.logById(client.getId(), `Connection closed.Cleaning up meeting`);
                 this.realm.removeClientById(client.getId());
                 this.emit("close", client);
             }
+            utils_1.clog("_configureWS.close-end: " + (new Date()).toISOString());
         });
         // Handle messages from peers.
         socket.on("message", (data) => {

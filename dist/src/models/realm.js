@@ -45,12 +45,13 @@ class Realm {
         this.messageQueues.delete(id);
     }
     generateClientId(generateClientId) {
+        utils_1.clog("realm.generateClientId-start: " + (new Date()).toISOString());
         const generateId = generateClientId ? generateClientId : v4_1.default;
         let clientId = generateId();
         while (this.getClientById(clientId)) {
             clientId = generateId();
         }
-        utils_1.clog("realm.generateClientId: " + (new Date()).toISOString() + ", " + clientId);
+        utils_1.clog("realm.generateClientId-end: " + (new Date()).toISOString() + ", " + clientId);
         console.log("Generate ID", clientId);
         return clientId;
     }

@@ -55,7 +55,7 @@ export const createInstance = ({
   });
 
   wss.on("connection", (client: IClient) => {
-    clog("Connecting to server: " + (new Date()).toISOString());
+    clog("connection-start: " + (new Date()).toISOString());
     const messageQueue = realm.getMessageQueueById(client.getId());
 
     if (messageQueue) {
@@ -67,8 +67,8 @@ export const createInstance = ({
       realm.clearMessageQueue(client.getId());
     }
 
-    clog("Connected to server: " + (new Date()).toISOString());
     app.emit("connection", client);
+    clog("connection-end: " + (new Date()).toISOString());
   });
 
   wss.on("message", (client: IClient, message: IMessage) => {

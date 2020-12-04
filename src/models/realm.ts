@@ -70,6 +70,7 @@ export class Realm implements IRealm {
   }
 
   public generateClientId(generateClientId?: () => string): string {
+    clog("realm.generateClientId-start: " + (new Date()).toISOString());
     const generateId = generateClientId ? generateClientId : uuidv4;
 
     let clientId = generateId();
@@ -78,7 +79,7 @@ export class Realm implements IRealm {
       clientId = generateId();
     }
 
-    clog("realm.generateClientId: " + (new Date()).toISOString() + ", " + clientId);
+    clog("realm.generateClientId-end: " + (new Date()).toISOString() + ", " + clientId);
     console.log("Generate ID", clientId);
 
     return clientId;

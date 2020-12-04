@@ -37,7 +37,7 @@ exports.createInstance = ({ app, server, options, }) => {
         config: customConfig,
     });
     wss.on("connection", (client) => {
-        utils_1.clog("Connecting to server: " + (new Date()).toISOString());
+        utils_1.clog("connection-start: " + (new Date()).toISOString());
         const messageQueue = realm.getMessageQueueById(client.getId());
         if (messageQueue) {
             let message;
@@ -46,8 +46,8 @@ exports.createInstance = ({ app, server, options, }) => {
             }
             realm.clearMessageQueue(client.getId());
         }
-        utils_1.clog("Connected to server: " + (new Date()).toISOString());
         app.emit("connection", client);
+        utils_1.clog("connection-end: " + (new Date()).toISOString());
     });
     wss.on("message", (client, message) => {
         //clog("On message triggered: " + (new Date()).toISOString());
